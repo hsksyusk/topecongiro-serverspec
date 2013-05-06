@@ -1,0 +1,1 @@
+mail.notouch.topecongiro.com. 86400 IN	CNAME	notouch.topecongiro.com.

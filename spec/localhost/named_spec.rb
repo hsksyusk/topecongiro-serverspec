@@ -1,0 +1,92 @@
+require 'spec_helper'
+
+describe 'bind' do
+  it { should be_installed }
+end
+
+describe 'named' do
+  it { should be_enabled   }
+  it { should be_running   }
+end
+
+describe 'port 53' do
+  it { should be_listening }
+end
+
+describe 'port 953' do
+  it { should be_listening }
+end
+
+describe 'named-checkconf /etc/named.conf' do
+  it { should return_exit_status 0 }
+end
+
+describe 'dig @127.0.0.1 topecongiro.com | grep -A1 "ANSWER SECTION:" | tail -n1' do
+  it { should return_stdout 'topecongiro.com.	86400	IN	A	49.212.173.211' }
+end
+
+describe 'dig @127.0.0.1 topecongiro.com | grep -A1 "AUTHORITY SECTION:" | tail -n1' do
+  it { should return_stdout 'topecongiro.com.	86400	IN	NS	ns1.topecongiro.com.' }
+end
+
+describe 'dig @127.0.0.1 mail.topecongiro.com | grep -A1 "ANSWER SECTION:" | tail -n1' do
+  it { should return_stdout 'mail.topecongiro.com.	86400	IN	CNAME	topecongiro.com.' }
+end
+
+describe 'dig @127.0.0.1 www.topecongiro.com | grep -A1 "ANSWER SECTION:" | tail -n1' do
+  it { should return_stdout 'www.topecongiro.com.	86400	IN	CNAME	topecongiro.com.' }
+end
+
+describe 'dig MX @127.0.0.1 topecongiro.com | grep -A1 "ANSWER SECTION:" | tail -n1' do
+  it { should return_stdout 'topecongiro.com.	86400	IN	MX	10 topecongiro.com.' }
+end
+
+describe 'dig @127.0.0.1 ns1.topecongiro.com | grep -A1 "ANSWER SECTION:" | tail -n1' do
+  it { should return_stdout 'ns1.topecongiro.com.	86400	IN	A	49.212.173.211' }
+end
+
+describe 'dig @127.0.0.1 notouch.topecongiro.com | grep -A1 "ANSWER SECTION:" | tail -n1' do
+  it { should return_stdout 'notouch.topecongiro.com. 86400	IN	A	49.212.173.211' }
+end
+
+describe 'dig @127.0.0.1 www.notouch.topecongiro.com | grep -A1 "ANSWER SECTION:" | tail -n1' do
+  it { should return_stdout 'www.notouch.topecongiro.com. 86400 IN	CNAME	notouch.topecongiro.com.' }
+end
+
+describe 'dig @127.0.0.1 mail.notouch.topecongiro.com | grep -A1 "ANSWER SECTION:" | tail -n1' do
+  it { should return_stdout 'mail.notouch.topecongiro.com. 86400 IN	CNAME	notouch.topecongiro.com.' }
+end
+
+describe 'dig MX @127.0.0.1 notouch.topecongiro.com | grep -A1 "ANSWER SECTION:" | tail -n1' do
+  it { should return_stdout 'notouch.topecongiro.com. 86400	IN	MX	10 notouch.topecongiro.com.' }
+end
+
+describe 'resolv' do
+  context 'topecongiro.com' do
+    it { should be_resolvable.by('dns') }
+  end
+  context 'ns1.topecongiro.com' do
+    it { should be_resolvable.by('dns') }
+  end
+  context 'mail.topecongiro.com' do
+    it { should be_resolvable.by('dns') }
+  end
+  context 'www.topecongiro.com' do
+    it { should be_resolvable.by('dns') }
+  end
+  context '-type=mx topecongiro.com' do
+    it { should be_resolvable.by('dns') }
+  end
+  context 'notouch.topecongiro.com' do
+    it { should be_resolvable.by('dns') }
+  end
+  context 'mail.notouch.topecongiro.com' do
+    it { should be_resolvable.by('dns') }
+  end
+  context 'www.notouch.topecongiro.com' do
+    it { should be_resolvable.by('dns') }
+  end
+  context '-type=mx notouch.topecongiro.com' do
+    it { should be_resolvable.by('dns') }
+  end
+end
